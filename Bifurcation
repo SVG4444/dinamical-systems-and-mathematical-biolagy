@@ -1,0 +1,32 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+
+# Parameters
+r_min, r_max = 5, 9.47
+num_r = 20000
+num_iter = 2000
+last = 100
+
+# Create array of r values
+r_values = np.linspace(r_min, r_max, num_r)
+x = np.full_like(r_values, 0.5)
+
+plt.figure(figsize=(15, 10))
+for i in range(num_iter):
+    # Ensure x stays within valid bounds
+    x = np.where(x <= 0, 0.0001, x)
+    # Iterate logistic map
+    x = r_values * x * (1 - np.log(1 + np.sqrt(x)))
+    # Plot the last iterations
+    if i >= num_iter - last:
+        plt.plot(r_values, x, ',k', alpha=0.4)
+
+plt.xlabel('r')
+plt.ylabel('x')
+plt.xlim(r_min, r_max)
+plt. 
+ylim(-0.5, 3)
+plt.grid(True, linewidth=0.5, linestyle='--', alpha=0.7)
+plt.tight_layout()
+plt.show()
