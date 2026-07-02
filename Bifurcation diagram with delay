@@ -1,0 +1,34 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(u_current, u_previous, r):
+    return r * u_current * (1-np.log(1+np.sqrt(u_previous)))
+
+r_min, r_max =3.6,4
+num_r = 5000
+num_skip = 1000
+num_draw = 500
+
+r_values = np.linspace(r_min, r_max, num_r)
+plt.figure(figsize=(10, 8))
+for r in r_values:
+    u_prev = 0.1
+    u_curr = 0.15
+    points_to_draw = []
+    for _ in range(num_skip):
+        u_next = f(u_curr, u_prev, r)
+        u_prev, u_curr = u_curr, u_next
+    for _ in range(num_draw):
+        u_next = f(u_curr, u_prev, r)
+        points_to_draw.append(u_next)
+        u_prev, u_curr = u_curr, u_next
+    
+    x_points = [r] * len(points_to_draw)
+    y_points = points_to_draw
+    plt.plot(x_points, y_points, ',k', alpha=1, markersize=0.8)
+
+plt.xlabel('r')
+plt.ylabel('u')
+plt.xlim(r_min, r_max)
+plt.grid(True, linewidth=0.5, linestyle='--', alpha=0.7)
+plt.show()
