@@ -1,0 +1,41 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+def f(t, y):
+    x, y_val = y
+    dxdt = x*(1.2 - np.log(x)) - x*y_val
+    dydt = -2*y_val + x*y_val
+    return [dxdt, dydt]
+
+xmin, xmax, ymin, ymax = 1.8, 2.4, 0.4, 0.7
+
+num_points = 15
+x0_vals = np.linspace(xmin, xmax, num_points)
+y0_vals = np.linspace(ymin, ymax, num_points)
+
+fig, ax = plt.subplots(figsize=(13,8))
+ax.set_xlim(xmin, xmax)
+ax.set_ylim(ymin, ymax)
+
+X, Y = np.meshgrid(np.linspace(xmin, xmax, 20), np.linspace(ymin, ymax, 20))
+
+U = np.empty_like(X)
+V = np.empty_like(Y)
+
+for i in range(X.shape[0]):
+    for j in range(X.shape[1]):
+        u, v = f(0, [X[i, j], Y[i, j]])
+        U[i, j] = u
+        V[i, j] = v
+
+ax.streamplot(X, Y, U, V, color='b', linewidth=0.45, density=2, arrowsize=0.8)
+
+for x0 in x0_vals:
+    for y0 in y0_vals:
+        sol = solve_ivp(f, [0, 10], [x0, y0], max_step=0.04)
+        ax.plot(sol.y[0], sol.y[1], 'b-', linewidth=0.6, alpha=0.5)
+
+plt.xlabel('u')
+plt.ylabel('v')
+plt.show()
